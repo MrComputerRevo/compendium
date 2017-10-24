@@ -52,6 +52,70 @@ typedef struct __declspec(align(4))
 
 Notably, there are indeed **no general-purpose registers**, function-local parameters/variables, return values, a freely accessible stack etc.
 
+Before *Chaos;Child* and introduction of the *.scx* format, the thread structure was different: [^1]
+
+```C
+typedef struct __declspec(align(4))
+{
+  /* 0000 */ unsigned int THD_FLAG;
+  /* 0004 */ _BYTE gap0[12];
+  /* 0010 */ unsigned int THD_EXEC_PRI;
+  /* 0014 */ unsigned int THD_GROUP_NO;
+  /* 0018 */ unsigned int THD_WAIT_CNT;
+  /* 001C */ unsigned int THD_SCR_PARAM;
+  /* 0020 */ void *THD_SCR_ADR;
+  /* 0024 */ unsigned int THD_LOOP_CNT;
+  /* 0028 */ unsigned int THD_LOOP_ADR;
+  /* 002C */ unsigned int THD_RET_CNT;
+  /* 0030 */ unsigned int THD_RET_ADR[8];  
+  /* 0050 */ unsigned int THD_RET_GRP[8];
+  /* 0070 */ void *THD_SCR_ADR2;
+  /* 0074 */ unsigned int THD_WAIT_CNT2;
+  /* 0078 */ unsigned int THD_LOOP_CNT2;
+  /* 007C */ unsigned int THD_LOOP_ADR2;
+  /* 0080 */ unsigned int THD_DRAW_PRI;
+  /* 0084 */ unsigned int THD_DRAW_TYPE;
+  /* 0088 */ unsigned int THD_ALPHA;
+  /* 008C */ _BYTE gap1[40];
+  /* 00B4 */ unsigned int THD_TEMP1;
+  /* 00B8 */ unsigned int THD_TEMP2;
+  /* 00BC */ unsigned int THD_WORK01;
+  /* 00C0 */ unsigned int THD_WORK02;
+  /* 00C4 */ unsigned int THD_WORK03;
+  /* 00C8 */ unsigned int THD_WORK04;
+  /* 00CC */ unsigned int THD_WORK05;
+  /* 00D0 */ unsigned int THD_WORK06;
+  /* 00D4 */ unsigned int THD_WORK07;
+  /* 00D8 */ unsigned int THD_WORK08;
+  /* 00DC */ unsigned int THD_WORK09;
+  /* 00E0 */ unsigned int THD_WORK10;
+  /* 00E4 */ unsigned int THD_WORK11;
+  /* 00E8 */ unsigned int THD_WORK12;
+  /* 00EC */ unsigned int THD_WORK13;
+  /* 00F0 */ unsigned int THD_WORK14;
+  /* 00F4 */ unsigned int THD_WORK15;
+  /* 00F8 */ unsigned int THD_WORK16;
+  /* 00FC */ unsigned int THD_WORK17;
+  /* 0100 */ unsigned int THD_WORK18;
+  /* 0104 */ unsigned int THD_WORK19;
+  /* 0108 */ unsigned int THD_WORK20;
+  /* 010C */ unsigned int THD_WORK21;
+  /* 0110 */ unsigned int THD_WORK22;
+  /* 0114 */ unsigned int THD_WORK23;
+  /* 0118 */ unsigned int THD_WORK24;
+  /* 011C */ unsigned int THD_WORK25;
+  /* 0120 */ unsigned int THD_WORK26;
+  /* 0124 */ unsigned int THD_WORK27;
+  /* 0128 */ unsigned int THD_WORK28;
+  /* 012C */ unsigned int THD_WORK29;  
+  /* 0130 */ unsigned int THD_WORK30;  
+  /* 0134 */ unsigned int THD_WORK31;  
+  /* 0138 */ unsigned int THD_WORK32;  
+} tagTHREAD;
+```
+
+[^1]: The naming for this structure was taken from a constant list used in 11eyes CrossOver PC port
+
 In the reference implementation, executing most *undefined* operations causes the offending thread to lock up because the program counter is not changed. As they never relinquish control, this also locks up the game unless they are killed by other threads. Some undefined operations (e.g. some undefined two-byte opcodes) cause out-of-bounds reads that crash the program instead.
 
 ## Memory
