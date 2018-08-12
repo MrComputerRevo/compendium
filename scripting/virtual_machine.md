@@ -23,13 +23,14 @@ A thread includes the following context:
 * **Position in thread group** (TODO ? - reference implementation has linked list; is this per thread group?)
 * Space for **32 thread-local variables**.
 
-An **important note about thread-local variables:** Thread-local variable accesses are indexed with the start of the thread context structure in the reference implementation, not the start of the thread-local variables array. That begins at `SC3ThreadContext+0xBC` (in bytes), so to access the first actual thread-local variable, a script has to access `ThreadVars[47]`. We **have seen scripts read and write lower indexes** and need to reverse engineer this further. Replicating the precise structure from the reference implementation **may be necessary**:
+An **important note about thread-local variables:** Thread-local variable accesses are indexed with the start of the thread context structure in the reference implementation, not the start of the thread-local variables array. That begins at `SC3ThreadContext+0xBC` (in bytes), so to access the first actual thread-local variable, a script has to access `ThreadVars[47]`. We **have seen scripts read and write lower indexes** (specifically, scripts can set the drawing type or priority) and need to reverse engineer this further. Replicating the precise structure from the reference implementation **may be necessary**:
 
 ```C
 typedef struct __declspec(align(4))
 {
   /* 0000 */  int accumulator;
-  /* 0004 */  _BYTE gap4[16];
+  /* 0004 */  _BYTE gap4[12];
+ 	/* 0010 */  unsigned int execution_priority;
   /* 0014 */  unsigned int thread_group_id;
   /* 0018 */  unsigned int sleep_timeout;
   /* 001C */  _BYTE gap28[8];
@@ -40,11 +41,14 @@ typedef struct __declspec(align(4))
   /* 0050 */  unsigned int ret_address_script_buffer_ids[8];
   /* 0070 */  int thread_id;
   /* 0074 */  int script_buffer_id;
-  /* 0078 */  _BYTE gap120[68];
+	 /* 0078 */  char gap78[8];
+	 /* 0080 */  unsigned int draw_priority;
+ 	/* 0084	*/	 unsigned int draw_type;
+	 /* 0088 */  char gap120[52];
   /* 00BC */  int thread_local_variables[32];
   /* 013C */  int somePageNumber;
-  /* 0140 */  SC3ThreadContext *next_context;
-  /* 0144 */  SC3ThreadContext *prev_context;
+  /* 0140 */  SC3ThreadContext *prev_context;
+  /* 0144 */  SC3ThreadContext *next_context;
   /* 0148 */  SC3ThreadContext *next_free_context;
   /* 014C */  void *pc;
 } SC3ThreadContext;
@@ -58,7 +62,9 @@ Before *Chaos;Child* and introduction of the *.scx* format, the thread structure
 typedef struct __declspec(align(4))
 {
   /* 0000 */ unsigned int THD_FLAG;
-  /* 0004 */ _BYTE gap0[12];
+  /* 0004 */ unsigned int THD_PREV_THD;
+  /* 0008 */ unsigned int THD_NEXT_THD;
+  /* 000C */ unsigned int THD_NEXT_FREE;
   /* 0010 */ unsigned int THD_EXEC_PRI;
   /* 0014 */ unsigned int THD_GROUP_NO;
   /* 0018 */ unsigned int THD_WAIT_CNT;
