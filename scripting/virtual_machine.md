@@ -30,7 +30,7 @@ typedef struct __declspec(align(4))
 {
   /* 0000 */  int accumulator;
   /* 0004 */  _BYTE gap4[12];
- 	/* 0010 */  unsigned int execution_priority;
+  /* 0010 */  unsigned int execution_priority;
   /* 0014 */  unsigned int thread_group_id;
   /* 0018 */  unsigned int sleep_timeout;
   /* 001C */  _BYTE gap28[8];
@@ -41,10 +41,10 @@ typedef struct __declspec(align(4))
   /* 0050 */  unsigned int ret_address_script_buffer_ids[8];
   /* 0070 */  int thread_id;
   /* 0074 */  int script_buffer_id;
-	 /* 0078 */  char gap78[8];
-	 /* 0080 */  unsigned int draw_priority;
- 	/* 0084	*/	 unsigned int draw_type;
-	 /* 0088 */  char gap120[52];
+  /* 0078 */  char gap78[8];
+  /* 0080 */  unsigned int draw_priority;
+  /* 0084 */  unsigned int draw_type;
+  /* 0088 */  char gap120[52];
   /* 00BC */  int thread_local_variables[32];
   /* 013C */  int somePageNumber;
   /* 0140 */  SC3ThreadContext *prev_context;
